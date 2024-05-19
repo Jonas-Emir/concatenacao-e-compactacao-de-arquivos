@@ -2,7 +2,35 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .hero-section {
+        padding: 2rem;
+    }
+
+    .hero-text {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .hero-image img {
+        width: 100%;
+        height: auto;
+    }
+</style>
+
+<div class="container-fluid hero-section">
+    <div class="row">
+        <div class="col-md-6 hero-text">
+            <h1 class="display-4">Gerencie seus documentos de maneira rápida</h1>
+            <p class="lead">Tenha controle total sobre seus documentos e realize conversões com praticidade.</p>
+            <div>
+                <button type="button" class="btn btn-primary btn-lg mr-2">Gerenciar Arquivos</button>
+            </div>
+        </div>
+        <div class="col-md-6 hero-image">
+            <img src="https://via.placeholder.com/600x400" alt="Imagem de exemplo">
+        </div>
+    </div>
 </div>
+

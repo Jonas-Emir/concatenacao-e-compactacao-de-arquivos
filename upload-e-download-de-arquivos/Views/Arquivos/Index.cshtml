@@ -1,0 +1,143 @@
+﻿@model IEnumerable<upload_e_download_de_arquivos.Models.ArquivoModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var mensagem = document.getElementById('mensagem');
+
+        setTimeout(function () {
+            mensagem.style.display = 'none';
+        }, 4000);
+    });
+</script>
+
+<style>
+    .mensagem {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: lightgreen;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        display: none;
+    }
+
+    .imagem {
+        width: 400px;
+        height: auto;
+    }
+
+    .blocoImagem {
+        padding-left: 100px;
+    }
+
+    .btnEnviar {
+        display: block;
+    }
+
+    .icone {
+        width: 20px;
+        height: 20px;
+    }
+
+    .blocoEnviaArquivo {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<div class="container">
+    <h1 class="mt-5">Bem-vindo ao Gerenciador de Arquivos</h1>
+    <p class="lead">Faça upload e gerencie seus arquivos aqui.</p>
+
+    <div class="row mt-5 ">
+        <div class="col-md-6 blocoEnviaArquivo">
+            <h2>Enviar Arquivo</h2>
+            @if (TempData["Mensagem"] != null)
+            {
+                <div class="alert alert-danger" id="mensagem" role="alert">
+                    @TempData["Mensagem"]
+                </div>
+            }
+            <form action="/Arquivos/UploadArquivo" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="fileInput" class="form-label">Selecione o arquivo</label>
+                    <input type="file" class="form-control" id="fileInput" name="arquivos">
+                </div>
+                <div class="mb-3">
+                    <label for="descricaoInput" class="form-label">Descrição do documento</label>
+                    <input type="text" class="form-control" id="descricaoInput" name="descricaoArquivo">
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-success btnEnviar w-100">Enviar</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 blocoImagem">
+            <img class="imagem" src="./Imagens/documentoImg.svg" alt="Imagem representativa de arquivos" />
+        </div>
+
+    </div>
+</div>
+<div class="col-md-12">
+    <h2>Arquivos Recentes</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Descrição
+                </th>
+                <th>
+                    Data do Envio
+                </th>
+                <th>
+                    Extensão
+                </th>
+                <th>
+                    Ações
+                </th>
+                <th>
+                    Teste
+                </th>
+                <th>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Descricao)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DataEnvio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ContentType)
+                    </td>
+
+                    <td>
+                        <a class="btn btn-primary" asp-action="Visualizar" asp-route-id="@item.Id_Arquivo" target="_blank">Visualizar</a>
+
+                        <a href="#">
+                            <img src="./Imagens/iconDelete.svg" alt="Ícone" class="icone" />
+                        </a>
+                        <a asp-action="DeletaArquivo" asp-route-id="@item.Id_Arquivo" class="btn btn-danger">Excluir</a>
+
+                        <a asp-action="Visualizar" asp-route-id="@item.Id_Arquivo" class="btn btn-success" download="@item.Descricao">Download</a>
+
+                    </td>
+                    <td>
+                        Teste
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
