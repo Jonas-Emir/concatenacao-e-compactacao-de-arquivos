@@ -53,7 +53,6 @@
 <div class="container">
     <h1 class="mt-5">Bem-vindo ao Gerenciador de Arquivos</h1>
     <p class="lead">Faça upload e gerencie seus arquivos aqui.</p>
-
     <div class="row mt-5 ">
         <div class="col-md-6 blocoEnviaArquivo">
             <h2>Enviar Arquivo</h2>
@@ -73,14 +72,13 @@
                     <input type="text" class="form-control" id="descricaoInput" name="descricaoArquivo">
                 </div>
                 <div class="mb-3">
-                    <button type="submit" class="btn btn-success btnEnviar w-100">Enviar</button>
+                    <button type="submit" class="btn btn-primary btnEnviar w-100">Enviar</button>
                 </div>
             </form>
         </div>
         <div class="col-md-6 blocoImagem">
             <img class="imagem" src="./Imagens/documentoImg.svg" alt="Imagem representativa de arquivos" />
         </div>
-
     </div>
 </div>
 <div class="col-md-12">
@@ -100,11 +98,6 @@
                 <th>
                     Ações
                 </th>
-                <th>
-                    Teste
-                </th>
-                <th>
-                </th>
             </tr>
         </thead>
         <tbody>
@@ -120,21 +113,15 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.ContentType)
                     </td>
-
                     <td>
-                        <a class="btn btn-primary" asp-action="Visualizar" asp-route-id="@item.Id_Arquivo" target="_blank">Visualizar</a>
+                        <a class="btn" asp-action="Visualizar" asp-route-id="@item.Id_Arquivo" target="_blank">Visualizar</a>
 
                         <a href="#">
                             <img src="./Imagens/iconDelete.svg" alt="Ícone" class="icone" />
                         </a>
-                        <a asp-action="DeletaArquivo" asp-route-id="@item.Id_Arquivo" class="btn btn-danger">Excluir</a>
+                        <a asp-action="DeletaArquivo" asp-route-id="@item.Id_Arquivo" class="">Excluir</a>
 
-                        <a asp-action="Visualizar" asp-route-id="@item.Id_Arquivo" class="btn btn-success" download="@item.Descricao">Download</a>
-
-                    </td>
-                    <td>
-                        Teste
-
+                        <a asp-action="Visualizar" asp-route-id="@item.Id_Arquivo" class="" download="@item.Descricao">Download</a>
                     </td>
                 </tr>
             }

@@ -3,34 +3,28 @@
 }
 
 <style>
+    .hero-image{
+        padding-top:100px;
+    }
+
     .hero-section {
-        padding: 2rem;
-    }
-
-    .hero-text {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .hero-image img {
-        width: 100%;
-        height: auto;
+        text-align: center;
     }
 </style>
 
-<div class="container-fluid hero-section">
-    <div class="row">
-        <div class="col-md-6 hero-text">
-            <h1 class="display-4">Gerencie seus documentos de maneira rápida</h1>
-            <p class="lead">Tenha controle total sobre seus documentos e realize conversões com praticidade.</p>
-            <div>
-                <button type="button" class="btn btn-primary btn-lg mr-2">Gerenciar Arquivos</button>
+<div class="container">
+    <div class="row blocoSection justify-content-center align-items-center">
+        <div class="col-md-6 pt-5 text-center">
+            <div class="custom-file mb-4">
+                <h1 class="display-4">Gerencie documentos de maneira rápida</h1>
+                <p class="lead">Tenha controle total sobre seus documentos e realize conversões e armazenamento com praticidade.</p>
+                <div>
+                    <button type="button" asp-area="" asp-controller="Arquivos" asp-action="Index" class="btn btn-primary btn-lg mr-2">Gerenciar Arquivos</button>
+                </div>
             </div>
         </div>
-        <div class="col-md-6 hero-image">
-            <img src="https://via.placeholder.com/600x400" alt="Imagem de exemplo">
-        </div>
+    </div>
+    <div class="col-md-12 hero-image text-center">
+        <img src="./Imagens/inicioDocImage1.svg" alt="Imagem de exemplo">
     </div>
 </div>
-

@@ -1,0 +1,46 @@
+﻿@model IEnumerable<upload_e_download_de_arquivos.Models.ArquivoModel>
+
+@{
+    ViewData["Title"] = "Conversor de Arquivos";
+}
+
+<style>
+    .box-shadow {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        background-color: #fff;
+    }
+</style>
+
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="box-shadow">
+        <h1 class="mb-4">Zip ou Concatene Arquivos PDF's</h1>
+        <form action="/Conversor/CarregarPdfOrigem" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="directoryPath" class="form-label">Nome do arquivo</label>
+                <input type="text" class="form-control" id="directoryPath" placeholder="Digite o caminho do diretório">
+            </div>
+            <div class="mb-3">
+                <label for="fileUpload" class="form-label">Selecione os Arquivos</label>
+                <input type="file" class="form-control" id="fileUpload" name="arquivos" multiple>
+            </div>
+            <div class="mb-3">
+                <div class="mb-3 d-flex flex-row justify-content-center">
+                    <div class="form-check me-3">
+                        <input class="form-check-input" type="radio" name="operation" id="zipFiles" value="zip">
+                        <label class="form-check-label" for="zipFiles">
+                            Zipar Arquivos
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="operation" id="concatFiles" value="concat">
+                        <label class="form-check-label" for="concatFiles">
+                            Concatenar Arquivos
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Enviar</button>
+        </form>
+    </div>
+</div>
