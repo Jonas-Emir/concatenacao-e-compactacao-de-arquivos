@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PdfSharpCore.Pdf;
 using PdfSharpCore.Pdf.IO;
+using System.IO.Compression;
 using upload_e_download_de_arquivos.Infraestruture;
 
 namespace upload_e_download_de_arquivos.Controllers
@@ -22,42 +23,52 @@ namespace upload_e_download_de_arquivos.Controllers
             return View();
         }
 
-        public IActionResult Conversor()
+        public IActionResult Concatena()
         {
             return View();
         }
 
         [HttpPost]
-        public IActionResult CarregarPdfOrigem(IList<IFormFile> arquivos, string nomeArquivo, PdfSharpCore.Pdf.PdfDocument? destinoArquivo = null)
+        public async Task<IActionResult> ProcessaArquivo(IList<IFormFile> arquivos, string fileName, string actionType, PdfSharpCore.Pdf.PdfDocument? destinoArquivo = null)
         {
-            var pdfStreams = new List<(Stream stream, string fileName)>();
+            switch (actionType)
+            {
+                case "zip":
+                    return await ZiparArquivos((List<IFormFile>)arquivos, fileName);
+                case "concat":
+                    return await ConcatenarPdfs((List<IFormFile>)arquivos);
+                default:
+                    ViewBag.Message = "Por favor selecione uma das opções para continuar!";
+                    return View("Index");
+            }
+        }
+
+        public async Task<IActionResult> ConcatenarPdfs(IList<IFormFile> arquivos)
+        {
             var caminhoUploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+            var outputPdfPath = Path.Combine(caminhoUploads, "ConcatenatedOutput.pdf");
+
+            var pdfStreams = new List<(Stream stream, string fileName)>();
 
             foreach (var file in arquivos)
             {
                 if (file.ContentType != "application/pdf")
                 {
-                    ViewBag.Message = "Only PDF files are allowed.";
+                    ViewBag.Message = "Selecione apenas arquivos .PDF";
                     return View("Index");
                 }
+                else
+                {
+                    var memoryStream = new MemoryStream();
+                    file.CopyTo(memoryStream);
+                    memoryStream.Position = 0;
 
-                var memoryStream = new MemoryStream();
-                file.CopyTo(memoryStream);
-                memoryStream.Position = 0;
-
-                pdfStreams.Add((memoryStream, file.FileName));
+                    pdfStreams.Add((memoryStream, file.FileName));
+                }
             }
 
-            var outputFilePath = Path.Combine(caminhoUploads, "ConcatenatedOutput.pdf");
-
-            ConcatenatePdfs(pdfStreams, outputFilePath);
-
-            return RedirectToAction("Index");
-        }
-
-        public static void ConcatenatePdfs(List<(Stream stream, string fileName)> pdfStreams, string outputPdfPath)
-        {
             using var outputDocument = new PdfDocument();
+
             if (pdfStreams.Count > 1)
             {
                 foreach (var (pdfStream, fileName) in pdfStreams)
@@ -76,28 +87,57 @@ namespace upload_e_download_de_arquivos.Controllers
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Erro ao processar o PDF '{fileName}'. Arquivo corrompido ou inválido!");
-
-                        //   TempData["Mensagem"] = "Nenhum arquivo selecionado. Por favor, selecione um arquivo para continuar!";
+                        ViewBag.Message = ($"Erro ao processar o arquivo '{fileName}'. Arquivo corrompido ou inválido! Os demais arquivos foram concatenados.");
                     }
                 }
                 if (outputDocument.PageCount > 0)
                     outputDocument.Save(outputPdfPath);
                 else
-                    Console.WriteLine($"Nenhuma página identificada para criar o novo arquivo!");
+                    ViewBag.Message = ($"Nenhuma página identificada para criar o novo arquivo!");
             }
             else
-                Console.WriteLine($"Por favor, selecione mais de um arquivo para continuar!");
+                ViewBag.Message = ($"Por favor, selecione mais de um arquivo para concatenar!");
+
+            return View("Index");
         }
 
-        public void BuscarPastaDestino()
+        public async Task<IActionResult> ZiparArquivos(List<IFormFile> files, string fileName)
         {
+            string zipFileName = fileName != null ? $"{fileName}.zip" : $"_{DateTime.Now:yyyyMMddHHmmss}.zip";
+            string zipFilePath = Path.Combine(Path.GetTempPath(), zipFileName);
 
-        }
+            if (files != null && files.Count > 0)
+            {
+                try
+                {
+                    using (var zipToOpen = new FileStream(zipFilePath, FileMode.Create))
+                    {
+                        using (var archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
+                        {
+                            foreach (var file in files)
+                            {
+                                var fileEntry = archive.CreateEntry(file.FileName);
+                                using (var entryStream = fileEntry.Open())
+                                using (var fileStream = file.OpenReadStream())
+                                {
+                                    await fileStream.CopyToAsync(entryStream);
+                                }
+                            }
+                        }
+                    }
 
-        public void PdfMergeDinamico()
-        {
-            
+                    return File(System.IO.File.ReadAllBytes(zipFilePath), "application/zip", zipFileName);
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = $"An error occurred: {ex.Message}";
+                    return View("Index");
+                }
+            }
+            else
+                ViewBag.Message = "Nenhuma arquivo selecionado!";
+
+            return View("Index");
         }
     }
 }

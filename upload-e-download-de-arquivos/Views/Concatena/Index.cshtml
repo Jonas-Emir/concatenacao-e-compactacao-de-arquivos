@@ -4,6 +4,7 @@
     ViewData["Title"] = "Conversor de Arquivos";
 }
 
+
 <style>
     .box-shadow {
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -15,25 +16,26 @@
 <div class="container mt-5 d-flex justify-content-center">
     <div class="box-shadow">
         <h1 class="mb-4">Zip ou Concatene Arquivos PDF's</h1>
-        <form action="/Conversor/CarregarPdfOrigem" method="post" enctype="multipart/form-data">
+        <form action="/Concatena/ProcessaArquivo" method="post" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="directoryPath" class="form-label">Nome do arquivo</label>
-                <input type="text" class="form-control" id="directoryPath" placeholder="Digite o caminho do diretório">
+                <label for="directoryPath" class="form-label">Nome do Arquivo (Opcional)</label>
+                <input type="text" class="form-control" id="directoryPath" name="fileName" placeholder="Digite o nome que você deseja salvar o arquivo">
             </div>
             <div class="mb-3">
                 <label for="fileUpload" class="form-label">Selecione os Arquivos</label>
                 <input type="file" class="form-control" id="fileUpload" name="arquivos" multiple>
             </div>
             <div class="mb-3">
+                <label for="directoryPath" class="form-label">Selecione uma Opção</label>
                 <div class="mb-3 d-flex flex-row justify-content-center">
                     <div class="form-check me-3">
-                        <input class="form-check-input" type="radio" name="operation" id="zipFiles" value="zip">
+                        <input class="form-check-input" type="radio" name="actionType" id="zipFiles" value="zip">
                         <label class="form-check-label" for="zipFiles">
                             Zipar Arquivos
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="operation" id="concatFiles" value="concat">
+                        <input class="form-check-input" type="radio" name="actionType" id="concatFiles" value="concat">
                         <label class="form-check-label" for="concatFiles">
                             Concatenar Arquivos
                         </label>
@@ -42,5 +44,10 @@
             </div>
             <button type="submit" class="btn btn-primary w-100">Enviar</button>
         </form>
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Message</div>
+        }
     </div>
 </div>
+
