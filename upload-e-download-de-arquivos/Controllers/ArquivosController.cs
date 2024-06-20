@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 using upload_e_download_de_arquivos.Infraestruture;
 using upload_e_download_de_arquivos.Models;
 
