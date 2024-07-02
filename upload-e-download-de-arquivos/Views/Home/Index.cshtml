@@ -3,12 +3,16 @@
 }
 
 <style>
-    .hero-image{
-        padding-top:80px;
+    .hero-image {
+        padding-top: 70px;
     }
 
     .hero-section {
         text-align: center;
+    }
+
+    .img-fluid {
+        width: 400px;
     }
 </style>
 
@@ -16,10 +20,10 @@
     <div class="row blocoSection justify-content-center align-items-center">
         <div class="col-md-6 pt-3 text-center">
             <div class="custom-file mb-4">
-                <h1 class="display-4">Gerencie documentos de maneira rápida</h1>
+                <h1 class="display-5">Gerencie documentos de maneira rápida</h1>
                 <p class="lead">Tenha controle sobre seus arquivos e realize conversões e armazenamento com praticidade.</p>
                 <div>
-                    <button type="button" asp-area="" asp-controller="Arquivos" asp-action="Index" class="btn btn-primary btn-lg mr-2">Gerenciar Arquivos</button>
+                    <a class="btn btn-primary btn-lg mr-2" asp-area="" asp-controller="Arquivos" asp-action="Index">Gerenciar Arquivos</a>
                 </div>
             </div>
         </div>

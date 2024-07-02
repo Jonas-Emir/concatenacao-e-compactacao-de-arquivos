@@ -29,28 +29,34 @@ namespace upload_e_download_de_arquivos.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ProcessaArquivo(IList<IFormFile> arquivos, string fileName, string actionType, PdfSharpCore.Pdf.PdfDocument? destinoArquivo = null)
+        public async Task<IActionResult> ProcessaArquivo(IList<IFormFile> files, string fileName, string actionType, PdfSharpCore.Pdf.PdfDocument? destinationFile = null)
         {
             switch (actionType)
             {
                 case "zip":
-                    return await ZiparArquivos((List<IFormFile>)arquivos, fileName);
+                    return await ZiparArquivos((List<IFormFile>)files, fileName);
                 case "concat":
-                    return await ConcatenarPdfs((List<IFormFile>)arquivos);
+                    return await ConcatenarPdfs((List<IFormFile>)files, fileName);
                 default:
                     ViewBag.Message = "Por favor selecione uma das opções para continuar!";
                     return View("Index");
             }
         }
 
-        public async Task<IActionResult> ConcatenarPdfs(IList<IFormFile> arquivos)
+        public async Task<IActionResult> ConcatenarPdfs(IList<IFormFile> files, string fileName)
         {
-            var caminhoUploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
-            var outputPdfPath = Path.Combine(caminhoUploads, "ConcatenatedOutput.pdf");
-
             var pdfStreams = new List<(Stream stream, string fileName)>();
+            string destinationUploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+            string compactadosFolder = Path.Combine(destinationUploads, "ArquivosConcatenados");
 
-            foreach (var file in arquivos)
+            if (!Directory.Exists(compactadosFolder))
+            {
+                Directory.CreateDirectory(compactadosFolder);
+            }
+
+            var outputPdfPath = Path.Combine(compactadosFolder, fileName + ".pdf");
+
+            foreach (var file in files)
             {
                 if (file.ContentType != "application/pdf")
                 {
@@ -71,7 +77,7 @@ namespace upload_e_download_de_arquivos.Controllers
 
             if (pdfStreams.Count > 1)
             {
-                foreach (var (pdfStream, fileName) in pdfStreams)
+                foreach (var (pdfStream, file) in pdfStreams)
                 {
                     try
                     {
@@ -104,13 +110,19 @@ namespace upload_e_download_de_arquivos.Controllers
         public async Task<IActionResult> ZiparArquivos(List<IFormFile> files, string fileName)
         {
             string zipFileName = fileName != null ? $"{fileName}.zip" : $"_{DateTime.Now:yyyyMMddHHmmss}.zip";
-            string zipFilePath = Path.Combine(Path.GetTempPath(), zipFileName);
+            string destinationUploads = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+            string compactadosFolder = Path.Combine(destinationUploads, "ArquivosCompactados");
+
+            if (!Directory.Exists(compactadosFolder))
+                Directory.CreateDirectory(compactadosFolder);
+
+            var outputZipPath = Path.Combine(compactadosFolder, zipFileName);
 
             if (files != null && files.Count > 0)
             {
                 try
                 {
-                    using (var zipToOpen = new FileStream(zipFilePath, FileMode.Create))
+                    using (var zipToOpen = new FileStream(outputZipPath, FileMode.Create, FileAccess.Write))
                     {
                         using (var archive = new ZipArchive(zipToOpen, ZipArchiveMode.Create))
                         {
@@ -124,13 +136,13 @@ namespace upload_e_download_de_arquivos.Controllers
                                 }
                             }
                         }
-                    }
 
-                    return File(System.IO.File.ReadAllBytes(zipFilePath), "application/zip", zipFileName);
+                        File(System.IO.File.ReadAllBytes(outputZipPath), "application/zip", zipFileName);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    ViewBag.Message = $"An error occurred: {ex.Message}";
+                    ViewBag.Message = $"Ocorreu um erro ao compactar arquivos: {ex.Message}";
                     return View("Index");
                 }
             }
