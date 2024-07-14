@@ -14,11 +14,11 @@ Este projeto é um sistema para o Gerenciamento de Arquivos desenvolvida em ASP.
 ## Demonstração
 Veja abaixo uma demonstração visual do Sistema de Gerenciamento de Arquivos desenvolvido:
 
-### Vídeo Demonstrativo
-[Assista ao vídeo de demonstração](caminho/para/video.mp4)
+### Gif Demonstrativo
+![Assista ao Gif de demonstração](https://github.com/Jonas-Emir/upload-e-download-de-arquivos/blob/feature/ImplementacaoUploadArquivos/demonstracaoUploadArquivos.gif)
 
 ### Captura de Tela
-![Captura de Tela do Projeto](caminho/para/screenshot.png)
+![Captura de Tela do Projeto](https://github.com/Jonas-Emir/upload-e-download-de-arquivos/blob/feature/ImplementacaoUploadArquivos/ImagemDemonstrativaColagem.png)
 
 ## Tecnologias Utilizadas
 - **ASP.NET Core:** Framework robusto para desenvolvimento web, proporcionando alta performance e escalabilidade.
