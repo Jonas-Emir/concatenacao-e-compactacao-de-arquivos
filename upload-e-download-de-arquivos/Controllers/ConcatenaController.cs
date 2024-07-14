@@ -38,7 +38,7 @@ namespace upload_e_download_de_arquivos.Controllers
                 case "concat":
                     return await ConcatenarPdfs((List<IFormFile>)files, fileName);
                 default:
-                    ViewBag.Message = "Por favor selecione uma das opções para continuar!";
+                    TempData["MensagemErro"] = "Por favor selecione uma das opções para continuar!";
                     return View("Index");
             }
         }
@@ -60,7 +60,7 @@ namespace upload_e_download_de_arquivos.Controllers
             {
                 if (file.ContentType != "application/pdf")
                 {
-                    ViewBag.Message = "Selecione apenas arquivos .PDF";
+                    TempData["MensagemErro"] = "Selecione apenas arquivos .PDF";
                     return View("Index");
                 }
                 else
@@ -93,16 +93,19 @@ namespace upload_e_download_de_arquivos.Controllers
                     }
                     catch (Exception ex)
                     {
-                        ViewBag.Message = ($"Erro ao processar o arquivo '{fileName}'. Arquivo corrompido ou inválido! Os demais arquivos foram concatenados.");
+                        TempData["MensagemErro"] = ($"Erro ao processar o arquivo '{fileName}'. Arquivo corrompido ou inválido! Os demais arquivos foram concatenados.");
                     }
                 }
                 if (outputDocument.PageCount > 0)
+                {
                     outputDocument.Save(outputPdfPath);
+                    TempData["MensagemSucesso"] = "Arquivos concatenados e salvos com sucesso!";
+                }
                 else
-                    ViewBag.Message = ($"Nenhuma página identificada para criar o novo arquivo!");
+                    TempData["MensagemErro"] = ($"Nenhuma página identificada para criar o novo arquivo!");
             }
             else
-                ViewBag.Message = ($"Por favor, selecione mais de um arquivo para concatenar!");
+                TempData["MensagemErro"] = ($"Por favor, selecione mais de um arquivo para concatenar!");
 
             return View("Index");
         }
@@ -138,16 +141,17 @@ namespace upload_e_download_de_arquivos.Controllers
                         }
 
                         File(System.IO.File.ReadAllBytes(outputZipPath), "application/zip", zipFileName);
+                        TempData["MensagemSucesso"] = "Arquivos compactados e salvos com sucesso!";
                     }
                 }
                 catch (Exception ex)
                 {
-                    ViewBag.Message = $"Ocorreu um erro ao compactar arquivos: {ex.Message}";
+                    TempData["MensagemErro"] = $"Ocorreu um erro ao compactar arquivos: {ex.Message}";
                     return View("Index");
                 }
             }
             else
-                ViewBag.Message = "Nenhuma arquivo selecionado!";
+                TempData["MensagemErro"] = "Nenhuma arquivo selecionado!";
 
             return View("Index");
         }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using upload_e_download_de_arquivos.Infraestruture;
 
 namespace upload_e_download_de_arquivos
@@ -18,10 +17,17 @@ namespace upload_e_download_de_arquivos
             services.AddDbContext<ArquivoContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("StringContext")));
 
+            services.AddDistributedMemoryCache(); 
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); 
+                options.Cookie.HttpOnly = true; 
+                options.Cookie.IsEssential = true;
+            });
+
             services.AddControllersWithViews();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -38,7 +44,7 @@ namespace upload_e_download_de_arquivos
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

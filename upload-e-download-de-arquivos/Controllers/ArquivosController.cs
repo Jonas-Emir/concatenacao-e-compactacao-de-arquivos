@@ -25,6 +25,18 @@ namespace upload_e_download_de_arquivos.Controllers
             return View(arquivos);
         }
 
+        public IActionResult ListarArquivos()
+        {
+            var arquivos = _arquivoContext.Arquivos.ToList();
+
+            foreach (var arquivo in arquivos)
+            {
+                if (arquivo.ContentType != null && arquivo.ContentType.Contains("/"))
+                    arquivo.ContentType = arquivo.ContentType.Split('/')[1];
+            }
+            return View(arquivos);
+        }
+
         [HttpPost]
         public IActionResult UploadArquivo(IList<IFormFile> arquivos, string descricaoArquivo)
         {
@@ -44,11 +56,14 @@ namespace upload_e_download_de_arquivos.Controllers
                 };
                 _arquivoContext.Arquivos.Add(arquivo);
                 _arquivoContext.SaveChanges();
+
+                TempData["MensagemSucesso"] = "Arquivo enviado com sucesso!";
             }
             else
-                TempData["Mensagem"] = "Nenhum arquivo selecionado. Por favor, selecione um arquivo para continuar!";
+                TempData["MensagemErro"] = "Nenhum arquivo selecionado!";
 
-            return RedirectToAction("Index");
+            ListarArquivos();
+            return View("Index");
         }
 
         public IActionResult Visualizar(int id)
@@ -67,7 +82,10 @@ namespace upload_e_download_de_arquivos.Controllers
             _arquivoContext.Arquivos.Remove(arquivo.Result);
             _arquivoContext.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+            TempData["MensagemTabelaSucesso"] = "Arquivo excluído com sucesso!";
+         
+            ListarArquivos();
+              return RedirectToAction(nameof(Index));
         }
     }
 }

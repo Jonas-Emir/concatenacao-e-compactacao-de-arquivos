@@ -10,8 +10,9 @@
 
         setTimeout(function () {
             mensagem.style.display = 'none';
-        }, 2500);
+        }, 2800);
     });
+
 </script>
 
 <style>
@@ -71,14 +72,21 @@
     <h1 class="mt-5 text-center">Bem-vindo ao Gerenciador de Arquivos</h1>
     <p class="lead text-center">Faça upload e gerencie seus arquivos aqui.</p>
     <div class="row mt-5 d-flex justify-content-evenly">
-        <div class="col-md-4 form-container">
-            <h2 class="text-center">Enviar Arquivo</h2>
-            @if (TempData["Mensagem"] != null)
+        <div class="col-md-4 pt-5 form-container">
+            @if (TempData["MensagemSucesso"] != null)
             {
-                <div class="alert alert-danger" id="mensagem" role="alert">
-                    @TempData["Mensagem"]
+                <div class="alert alert-success text-center " id="mensagem" role="alert">
+                    <strong>@TempData["MensagemSucesso"]</strong>
                 </div>
             }
+            @if (TempData["MensagemErro"] != null)
+            {
+                <div class="alert alert-danger text-center" id="mensagem" role="alert">
+                    <strong>  @TempData["MensagemErro"] </strong>
+                </div>
+            }
+
+            <h2 class="text-center">Enviar Arquivo</h2>
             <form class="form" action="/Arquivos/UploadArquivo" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="fileInput" class="form-label">Selecione o arquivo</label>
@@ -94,12 +102,18 @@
             </form>
         </div>
         <div class="col-md-6 pt-5 d-flex align-items-center">
-            <img class="imagem img-fluid" src="./Imagens/documentoImg.svg" alt="Imagem representativa de arquivos" />
+            <img class="imagem img-fluid" src="/Imagens/documentoImg.svg" alt="Imagem representativa de arquivos" />
         </div>
     </div>
 </div>
 <div class="col-md-12 div-table">
     <h2>Arquivos Recentes</h2>
+    @if (TempData["MensagemTabelaSucesso"] != null)
+    {
+        <div class="alert alert-success text-center " id="mensagem" role="alert">
+            <strong>@TempData["MensagemTabelaSucesso"]</strong>
+        </div>
+    }
     <table class="table">
         <thead>
             <tr>
