@@ -1,0 +1,162 @@
+﻿@model IEnumerable<upload_e_download_de_arquivos.Models.ArquivoModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var mensagem = document.getElementById('mensagem');
+
+        setTimeout(function () {
+            mensagem.style.display = 'none';
+        }, 2800);
+    });
+
+</script>
+
+<style>
+    .mensagem {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: lightgreen;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        display: none;
+    }
+
+    .form-container {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        border-radius: 8px;
+        background-color: #fff;
+    }
+
+    .form-control {
+        padding: 10px 15px;
+    }
+
+    .imagem {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .container {
+        padding-bottom: 50px;
+    }
+
+    .form {
+        padding-top: 20px;
+    }
+
+    .td-acoes {
+        width: 115px;
+    }
+
+    .btn-acoes {
+        text-decoration: none;
+        display: inline-block;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+        .btn-acoes:hover {
+            transform: scale(1.2);
+        }
+</style>
+
+<div class="container">
+    <h1 class="mt-5 text-center">Bem-vindo ao Gerenciador de Arquivos</h1>
+    <p class="lead text-center">Faça upload e gerencie seus arquivos aqui.</p>
+    <div class="row mt-5 d-flex justify-content-evenly">
+        <div class="col-md-4 pt-5 form-container">
+            @if (TempData["MensagemSucesso"] != null)
+            {
+                <div class="alert alert-success text-center " id="mensagem" role="alert">
+                    <strong>@TempData["MensagemSucesso"]</strong>
+                </div>
+            }
+            @if (TempData["MensagemErro"] != null)
+            {
+                <div class="alert alert-danger text-center" id="mensagem" role="alert">
+                    <strong>  @TempData["MensagemErro"] </strong>
+                </div>
+            }
+
+            <h2 class="text-center">Enviar Arquivo</h2>
+            <form class="form" action="/Arquivos/UploadArquivo" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="fileInput" class="form-label">Selecione o arquivo</label>
+                    <input type="file" class="form-control" id="fileInput" name="arquivos">
+                </div>
+                <div class="mb-3">
+                    <label for="descricaoInput" class="form-label">Descrição do documento</label>
+                    <input type="text" class="form-control" id="descricaoInput" placeholder="Digite o nome do arquivo" name="descricaoArquivo">
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary w-100">Enviar</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 pt-5 d-flex align-items-center">
+            <img class="imagem img-fluid" src="/Imagens/documentoImg.svg" alt="Imagem representativa de arquivos" />
+        </div>
+    </div>
+</div>
+<div class="col-md-12 div-table">
+    <h2>Arquivos Recentes</h2>
+    @if (TempData["MensagemTabelaSucesso"] != null)
+    {
+        <div class="alert alert-success text-center " id="mensagem" role="alert">
+            <strong>@TempData["MensagemTabelaSucesso"]</strong>
+        </div>
+    }
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Descrição
+                </th>
+                <th>
+                    Data
+                </th>
+                <th>
+                    Extensão
+                </th>
+                <th class="text-center">
+                    Ações
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="td-table">
+                        @Html.DisplayFor(modelItem => item.Descricao)
+                    </td>
+                    <td class="td-table">
+                        @Html.DisplayFor(modelItem => item.DataEnvio)
+                    </td>
+                    <td class="td-table">
+                        @Html.DisplayFor(modelItem => item.ContentType)
+                    </td>
+                    <td class="text-center td-acoes">
+                        <a class="btn-acoes" asp-action="DeletaArquivo" asp-route-id="@item.Id_Arquivo">
+                            <img src="~/Imagens/iconDelete.svg" alt="Botão de Excluir" class="" />
+                        </a>
+                        <a class="btn-acoes" asp-action="Visualizar" asp-route-id="@item.Id_Arquivo" download="@item.Descricao">
+                            <img src="~/Imagens/btn-download.svg" alt="Botão de Download" class="" />
+                        </a>
+                        <a class="btn-acoes" asp-action="Visualizar" asp-route-id="@item.Id_Arquivo" target="blank">
+                            <img src="~/Imagens/btn-visualizity.svg" alt="Botão de Visualizar" class="" />
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

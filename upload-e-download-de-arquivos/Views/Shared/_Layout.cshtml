@@ -8,22 +8,56 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/upload_e_download_de_arquivos.styles.css" asp-append-version="true" />
 </head>
+
+<style>
+    .btn-nav {
+        margin-left: 8px;
+        text-decoration: none;
+        display: inline-block;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+        .btn-nav:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-inicioIcon{
+        margin-left: 8px;
+        text-decoration: none;
+        display: inline-block;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        }
+
+        .btn-inicioIcon:hover{
+            transform: scale(1.1);
+        }
+
+    .icon-large {
+        width: 35px;
+        height: auto;
+    }
+</style>
+
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">upload_e_download_de_arquivos</a>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm text-primary navbar-light bg-white border-bottom mb-3">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand btn-inicioIcon" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/Imagens/iconHome.svg" alt="Icone Inicio" class="icon-large" />
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-center">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item btn-nav">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Arquivos" asp-action="Index">Gerenciar Arquivos</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li class="nav-item btn-nav">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Concatena" asp-action="Index">Concatenar Arquivos</a>
                         </li>
                     </ul>
                 </div>
@@ -35,10 +69,9 @@
             @RenderBody()
         </main>
     </div>
-
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - upload_e_download_de_arquivos - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - Jonas Emir Francisco<a asp-area="" asp-controller="Home" asp-action="Privacy"></a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

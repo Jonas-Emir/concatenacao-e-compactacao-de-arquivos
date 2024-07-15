@@ -1,0 +1,80 @@
+﻿@model IEnumerable<upload_e_download_de_arquivos.Models.ArquivoModel>
+
+@{
+    ViewData["Title"] = "Conversor de Arquivos";
+}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var mensagem = document.getElementById('mensagem');
+
+        setTimeout(function () {
+            mensagem.style.display = 'none';
+        }, 2800);
+    });
+</script>
+
+<style>
+    .form-container {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        border-radius: 8px;
+        background-color: #fff;
+    }
+
+    .form-control {
+        padding: 10px 15px;
+    }
+
+    .form-check {
+        margin-left: 15px;
+    }
+
+</style>
+
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="col-md-6 form-container">
+        <h1 class="mb-4 text-center">Compacte ou Concatene Arquivos</h1>
+
+        @if (TempData["MensagemSucesso"] != null)
+        {
+            <div class="alert alert-success text-center" id="mensagem" role="alert">
+                <strong>@TempData["MensagemSucesso"]</strong>
+            </div>
+        }
+        @if (TempData["MensagemErro"] != null)
+        {
+            <div class="alert alert-danger text-center" id="mensagem" role="alert">
+                <strong>  @TempData["MensagemErro"] </strong>
+            </div>
+        }
+        <form class="edit-Form" action="/Concatena/ProcessaArquivo" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="fileName" class="form-label">Nome do Arquivo (Opcional)</label>
+                <input type="text" class="form-control" id="fileName" name="fileName" placeholder="Digite o nome do arquivo">
+            </div>
+            <div class="mb-3">
+                <label for="fileUpload" class="form-label">Selecione os Arquivos</label>
+                <input type="file" class="form-control" id="fileUpload" name="files" multiple>
+            </div>
+            <div class="mb-3">
+                <label for="actionType" class="form-label">Selecione uma Opção</label>
+                <div class="d-flex justify-content-normal">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="actionType" id="zipFiles" value="zip">
+                        <label class="form-check-label" for="zipFiles">
+                            Compactar Arquivos
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="actionType" id="concatFiles" value="concat">
+                        <label class="form-check-label" for="concatFiles">
+                            Concatenar Arquivos
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Enviar</button>
+        </form>
+    </div>
+</div>
