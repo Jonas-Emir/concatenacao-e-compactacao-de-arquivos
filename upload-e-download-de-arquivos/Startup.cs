@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using upload_e_download_de_arquivos.Infraestruture;
+using upload_e_download_de_arquivos.Interfaces;
+using upload_e_download_de_arquivos.Services;
 
 namespace upload_e_download_de_arquivos
 {
@@ -16,6 +18,9 @@ namespace upload_e_download_de_arquivos
         {
             services.AddDbContext<ArquivoContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("StringContext")));
+
+            services.AddScoped<IArquivoManipulacaoService, ArquivoManipulacaoService>();
+            services.AddScoped<IArquivoService, ArquivoService>();
 
             services.AddDistributedMemoryCache(); 
             services.AddSession(options =>

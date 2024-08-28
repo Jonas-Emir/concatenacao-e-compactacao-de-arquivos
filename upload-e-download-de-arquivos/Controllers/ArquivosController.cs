@@ -1,91 +1,86 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using upload_e_download_de_arquivos.Infraestruture;
-using upload_e_download_de_arquivos.Models;
+using upload_e_download_de_arquivos.Interfaces;
 
 namespace upload_e_download_de_arquivos.Controllers
 {
     public class ArquivosController : Controller
     {
-        ArquivoContext _arquivoContext;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IArquivoService _arquivoService;
+        private readonly IArquivoManipulacaoService _arquivoManipulacaoService;
 
-        public ArquivosController(ArquivoContext arquivoContext)
+        public ArquivosController(IWebHostEnvironment webHostEnvironment, IArquivoService arquivoService, IArquivoManipulacaoService arquivoManipulacaoService)
         {
-            _arquivoContext = arquivoContext;
+            _webHostEnvironment = webHostEnvironment;
+            _arquivoService = arquivoService;
+            _arquivoManipulacaoService = arquivoManipulacaoService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var arquivos = _arquivoContext.Arquivos.ToList();
-
-            foreach (var arquivo in arquivos)
-            {
-                if (arquivo.ContentType != null && arquivo.ContentType.Contains("/"))
-                    arquivo.ContentType = arquivo.ContentType.Split('/')[1];
-            }
-            return View(arquivos);
-        }
-
-        public IActionResult ListarArquivos()
-        {
-            var arquivos = _arquivoContext.Arquivos.ToList();
-
-            foreach (var arquivo in arquivos)
-            {
-                if (arquivo.ContentType != null && arquivo.ContentType.Contains("/"))
-                    arquivo.ContentType = arquivo.ContentType.Split('/')[1];
-            }
+            var arquivos = await _arquivoService.ListarArquivosAsync();
             return View(arquivos);
         }
 
         [HttpPost]
-        public IActionResult UploadArquivo(IList<IFormFile> arquivos, string descricaoArquivo)
+        public async Task<IActionResult> UploadArquivo(IList<IFormFile> arquivos, string descricaoArquivo)
         {
-            IFormFile imagemCarregada = arquivos.FirstOrDefault();
+            var imagemCarregada = arquivos.FirstOrDefault();
 
             if (imagemCarregada != null)
             {
-                MemoryStream ms = new MemoryStream();
-                imagemCarregada.OpenReadStream().CopyTo(ms);
-
-                ArquivoModel arquivo = new ArquivoModel()
+                if (!string.IsNullOrWhiteSpace(descricaoArquivo))
                 {
-                    Descricao = descricaoArquivo,
-                    Dados = ms.ToArray(),
-                    ContentType = imagemCarregada.ContentType,
-                    DataEnvio = DateTime.Now,
-                };
-                _arquivoContext.Arquivos.Add(arquivo);
-                _arquivoContext.SaveChanges();
+                    var sucesso = await _arquivoService.UploadArquivoAsync(imagemCarregada, descricaoArquivo);
 
-                TempData["MensagemSucesso"] = "Arquivo enviado com sucesso!";
+                    TempData["MensagemSucesso"] = sucesso ? "Arquivo enviado com sucesso!" : "Falha ao enviar o arquivo!";
+                }
+                else
+                    TempData["MensagemErro"] = "Necessário atribuir uma descrição!";
             }
             else
                 TempData["MensagemErro"] = "Nenhum arquivo selecionado!";
 
-            ListarArquivos();
-            return View("Index");
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Visualizar(int id)
+        public async Task<IActionResult> ProcessaArquivo(IList<IFormFile> files, string fileName, string actionType)
         {
-            var arquivosBanco = _arquivoContext.Arquivos.FirstOrDefault(a => a.Id_Arquivo == id);
+            bool sucesso;
+            switch (actionType)
+            {
+                case "zip":
+                    sucesso = await _arquivoManipulacaoService.ZiparArquivosAsync(files, fileName);
+                    TempData["MensagemSucesso"] = sucesso ? "Arquivos compactados e salvos com sucesso!" : "Erro ao compactar arquivos.";
+                    break;
+                case "concat":
+                    sucesso = await _arquivoManipulacaoService.ConcatenarPdfsAsync(files, fileName);
+                    TempData["MensagemSucesso"] = sucesso ? "Arquivos concatenados e salvos com sucesso!" : "Erro ao concatenar arquivos.";
+                    break;
+                default:
+                    TempData["MensagemErro"] = "Por favor selecione uma das opções para continuar!";
+                    break;
+            }
 
-            return File(arquivosBanco.Dados, arquivosBanco.ContentType);
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult DeletaArquivo(int id)
+        public async Task<IActionResult> Visualizar(int id)
         {
-            var arquivo = _arquivoContext.Arquivos.FindAsync(id);
-            if (arquivo.Result == null)
+            var arquivo = await _arquivoService.VisualizarArquivoAsync(id);
+            if (arquivo == null)
                 return NotFound();
 
-            _arquivoContext.Arquivos.Remove(arquivo.Result);
-            _arquivoContext.SaveChangesAsync();
+            return File(arquivo.Dados, arquivo.ContentType);
+        }
 
-            TempData["MensagemTabelaSucesso"] = "Arquivo excluído com sucesso!";
-         
-            ListarArquivos();
-              return RedirectToAction(nameof(Index));
+        public async Task<IActionResult> DeletaArquivo(int id)
+        {
+            var sucesso = await _arquivoService.DeletarArquivoAsync(id);
+
+            TempData["MensagemTabelaSucesso"] = sucesso ? "Arquivo excluído com sucesso!" : "Falha ao excluir o arquivo!";
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
