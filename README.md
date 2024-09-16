@@ -30,3 +30,7 @@ Veja abaixo uma demonstração visual do Sistema de Gerenciamento de Arquivos de
 - **Ambiente de Desenvolvimento:** Visual Studio.
 - **SDK .NET Core:** Instalação necessária para compilar e executar o projeto.
 - **Banco de Dados:** Configuração da string de conexão no arquivo `appsettings.json` e em ConfigureServices, suportando SQL Server ou outro banco compatível com EF Core.
+
+    <div align="center">
+  <h2>🚧 <strong>Em processo de refatoração</strong> 🚧</h2>
+</div>
